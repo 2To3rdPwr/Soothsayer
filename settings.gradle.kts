@@ -22,3 +22,7 @@ dependencyResolutionManagement {
 rootProject.name = "Soothsayer"
 include(":app")
 include(":commonUI")
+include(":Navigation")
+include(":CharacterSheet")
+include(":Inventory")
+include(":CharacterSelect")
