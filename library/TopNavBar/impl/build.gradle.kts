@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.hilt.android)
+    debugImplementation(libs.ui.tooling)
+    implementation(project(":library:CommonUiResources"))
     kapt(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
