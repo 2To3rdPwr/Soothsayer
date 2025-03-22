@@ -15,6 +15,7 @@ import com.twotothirdpower.morkborgcharactersheet.commonuiresources.Black
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.CutTheCrap
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.Red
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.Yellow
+import androidx.compose.ui.unit.sp
 
 class TopNavBarImpl @Inject constructor() : TopNavBar {
     @Composable
@@ -54,7 +55,8 @@ class TopNavBarImpl @Inject constructor() : TopNavBar {
                         Text(
                             text = item.label,
                             color = if (selectedTab == item.index) Red else Black,
-                            fontFamily = CutTheCrap
+                            fontFamily = CutTheCrap,
+                            fontSize = 18.sp
                         )
                     }
                 )

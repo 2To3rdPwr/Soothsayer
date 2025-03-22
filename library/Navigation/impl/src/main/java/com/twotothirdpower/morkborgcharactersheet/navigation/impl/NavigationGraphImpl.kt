@@ -40,7 +40,7 @@ class NavigationGraphImpl @Inject constructor(
         navController: NavHostController,
         modifier: Modifier
     ) {
-        val pagerState = rememberPagerState(initialPage = 0) { 3 }
+        val pagerState = rememberPagerState(initialPage = 1) { 3 }
         val currentRoute = navController.currentBackStackEntry?.destination?.route
         val coroutineScope = rememberCoroutineScope()
 
