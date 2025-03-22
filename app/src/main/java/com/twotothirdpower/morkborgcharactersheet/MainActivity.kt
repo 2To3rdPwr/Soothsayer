@@ -7,8 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,18 +27,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.OldNewspaper
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.SoothsayerTheme
+import com.twotothirdpower.morkborgcharactersheet.snackbar.SnackbarScaffold
+import com.twotothirdpower.morkborgcharactersheet.snackbar.SnackbarScaffold.Companion.LocalSnackbarHostState
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var snackbarScaffold: SnackbarScaffold
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             SoothsayerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                snackbarScaffold.Content { modifier ->
+                    Greeting(modifier = modifier)
                 }
             }
         }
@@ -50,10 +54,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(modifier: Modifier = Modifier) {
     var isVisible by remember { mutableStateOf(true) }
+    val snackbarHostState = LocalSnackbarHostState.current
 
     LaunchedEffect(Unit) {
         delay(3000) // 3 seconds
         isVisible = false
+        snackbarHostState.showSnackbar("Welcome to Soothsayer!")
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -83,7 +89,6 @@ fun Greeting(modifier: Modifier = Modifier) {
 }
 
 @Preview(showBackground = true)
-
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun GreetingPreview() {

@@ -1,0 +1,16 @@
+package com.twotothirdpower.morkborgcharactersheet.snackbar.impl
+
+import com.twotothirdpower.morkborgcharactersheet.snackbar.SnackbarScaffold
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object SnackbarModule {
+    @Provides
+    @Singleton
+    fun provideSnackbarScaffold(): SnackbarScaffold = SnackbarScaffoldImpl()
+} 
