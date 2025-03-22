@@ -1,9 +1,15 @@
 package com.twotothirdpower.morkborgcharactersheet.navigation.impl
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -75,14 +81,16 @@ class NavigationGraphImpl @Inject constructor(
         ) {
             // Greeting screen - cannot be navigated back to
             composable(Screen.Greeting.route) {
-                greetingScreen.Content(
-                    modifier = modifier,
-                    onGreetingComplete = {
-                        navController.navigate(Screen.CharacterSheet.route) {
-                            popUpTo(Screen.Greeting.route) { inclusive = true }
+                EdgeToEdgeHandler(modifier, true) {
+                    greetingScreen.Content(
+                        modifier = modifier,
+                        onGreetingComplete = {
+                            navController.navigate(Screen.CharacterSheet.route) {
+                                popUpTo(Screen.Greeting.route) { inclusive = true }
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
 
             // Empty composables for routes that are handled by the pager
@@ -100,27 +108,60 @@ class NavigationGraphImpl @Inject constructor(
 
     @Composable
     private fun MainScreens(modifier: Modifier, pagerState: PagerState, coroutineScope: CoroutineScope) {
-        Box(modifier = modifier) {
-            HorizontalPager(
-                state = pagerState,
-                modifier = modifier
-            ) { page ->
-                when (page) {
-                    0 -> characterSelectScreen.Content(modifier)
-                    1 -> characterSheetScreen.Content(modifier)
-                    2 -> inventoryScreen.Content(modifier)
-                }
-            }
-
-            topNavBar.Content(
-                modifier = Modifier.align(Alignment.TopCenter),
-                selectedTab = pagerState.currentPage,
-                onTabSelected = { index ->
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(index)
+        EdgeToEdgeHandler(modifier) {
+            Box(modifier = modifier) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = modifier
+                ) { page ->
+                    when (page) {
+                        0 -> characterSelectScreen.Content(modifier)
+                        1 -> characterSheetScreen.Content(modifier)
+                        2 -> inventoryScreen.Content(modifier)
                     }
                 }
-            )
+
+                topNavBar.Content(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    selectedTab = pagerState.currentPage,
+                    onTabSelected = { index ->
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    /**
+     * Wraps navigation destination composables to allow custom handling of Edge-To-Edge cases
+     * as some screens need to extend through the status bar, while others have content
+     * that shouldn't overlap with it.
+     *
+     * TODO: See if this can be made somehow more universal?
+     */
+    @Composable
+    private fun EdgeToEdgeHandler(
+        modifier: Modifier,
+        behindStatusBar: Boolean = false,
+        content: @Composable (modifier: Modifier) -> Unit) {
+        Surface {
+            // TODO: Return later to extend TopNavBar beneath status bar
+            val e2eModifier = if (behindStatusBar) {
+                modifier
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .imePadding()
+            } else {
+                modifier
+                    .windowInsetsPadding(WindowInsets.statusBars)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .imePadding()
+            }
+            Box (e2eModifier)
+            {
+                content(modifier)
+            }
         }
     }
 
