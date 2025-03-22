@@ -1,13 +1,12 @@
-package com.twotothirdpower.morkborgcharactersheet.topnav
+package com.twotothirdpower.morkborgcharactersheet.greeting
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
-interface TopNavBar {
+interface GreetingScreen {
     @Composable
     fun Content(
         modifier: Modifier,
-        selectedTab: Int,
-        onTabSelected: (Int) -> Unit
+        onGreetingComplete: () -> Unit
     )
 } 

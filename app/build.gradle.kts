@@ -67,6 +67,8 @@ dependencies {
     implementation(project(":screen:CharacterSelect:impl"))
     implementation(project(":screen:InventoryScreen:public"))
     implementation(project(":screen:InventoryScreen:impl"))
+    implementation(project(":screen:Greeting:public"))
+    implementation(project(":screen:Greeting:impl"))
     implementation(project(":library:Navigation:public"))
     implementation(project(":library:Navigation:impl"))
     implementation(project(":library:TopNavBar:public"))
