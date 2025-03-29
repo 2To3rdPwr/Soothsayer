@@ -1,6 +1,7 @@
 package com.twotothirdpower.morkborgcharactersheet.navigation.impl
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
@@ -13,7 +14,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -109,7 +109,16 @@ class NavigationGraphImpl @Inject constructor(
     @Composable
     private fun MainScreens(modifier: Modifier, pagerState: PagerState, coroutineScope: CoroutineScope) {
         EdgeToEdgeHandler(modifier) {
-            Box(modifier = modifier) {
+            Column(modifier = modifier) {
+                topNavBar.Content(
+                    modifier = Modifier,
+                    selectedTab = pagerState.currentPage,
+                    onTabSelected = { index ->
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(index)
+                        }
+                    }
+                )
                 HorizontalPager(
                     state = pagerState,
                     modifier = modifier
@@ -120,16 +129,6 @@ class NavigationGraphImpl @Inject constructor(
                         2 -> inventoryScreen.Content(modifier)
                     }
                 }
-
-                topNavBar.Content(
-                    modifier = Modifier.align(Alignment.TopCenter),
-                    selectedTab = pagerState.currentPage,
-                    onTabSelected = { index ->
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    }
-                )
             }
         }
     }
