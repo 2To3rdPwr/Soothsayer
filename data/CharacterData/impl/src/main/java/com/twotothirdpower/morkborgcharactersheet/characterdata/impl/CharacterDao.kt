@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CharacterDao {
-    @Query("SELECT * FROM characters")
+    @Query("SELECT * FROM characters ORDER BY lastChanged DESC")
     fun getAllCharacters(): Flow<List<CharacterData>>
 
-    @Query("SELECT * FROM characters WHERE characterId = :id")
-    fun getCharacterById(id: Int): Flow<CharacterData>
+    @Query("SELECT * FROM characters WHERE characterId = :characterId")
+    fun getCharacterById(characterId: String): Flow<CharacterData?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharacter(character: CharacterData)
