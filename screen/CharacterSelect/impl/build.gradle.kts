@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":screen:CharacterSelect:public"))
     implementation(project(":data:CharacterData:public"))
     implementation(project(":library:CommonUiResources"))
+    implementation(project(":data:Domain:public"))
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.material3.android)
     debugImplementation(libs.ui.tooling)
@@ -53,4 +54,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.hilt.navigation.compose)
 }

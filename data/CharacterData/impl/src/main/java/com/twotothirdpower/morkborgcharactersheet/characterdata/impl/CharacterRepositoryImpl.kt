@@ -12,7 +12,7 @@ class CharacterRepositoryImpl @Inject constructor(
         return characterDao.getAllCharacters()
     }
 
-    override fun getCharacterById(id: Int): Flow<CharacterData> {
+    override fun getCharacterById(id: Int): Flow<CharacterData?> {
         return characterDao.getCharacterById(id)
     }
 

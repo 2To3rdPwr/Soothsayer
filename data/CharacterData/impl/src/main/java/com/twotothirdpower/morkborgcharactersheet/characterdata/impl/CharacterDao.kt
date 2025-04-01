@@ -11,7 +11,7 @@ interface CharacterDao {
     fun getAllCharacters(): Flow<List<CharacterData>>
 
     @Query("SELECT * FROM characters WHERE characterId = :characterId")
-    fun getCharacterById(characterId: String): Flow<CharacterData?>
+    fun getCharacterById(characterId: Int): Flow<CharacterData?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCharacter(character: CharacterData)

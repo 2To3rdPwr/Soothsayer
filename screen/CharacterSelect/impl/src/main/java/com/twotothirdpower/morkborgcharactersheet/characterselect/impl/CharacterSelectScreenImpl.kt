@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,10 +31,11 @@ import androidx.compose.ui.unit.dp
 import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterData
 import com.twotothirdpower.morkborgcharactersheet.characterselect.CharacterSelectScreen
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.SoothsayerTheme
-import javax.inject.Inject
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.style.TextOverflow
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.R
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.twotothirdpower.morkborgcharactersheet.domain.models.CharacterListItem
 
 private val dummyCharacters = listOf(
     CharacterData(
@@ -80,14 +82,16 @@ private val dummyCharacters = listOf(
     )
 )
 
-class CharacterSelectScreenImpl @Inject constructor() : CharacterSelectScreen {
+class CharacterSelectScreenImpl : CharacterSelectScreen {
     @Composable
     override fun Content(modifier: Modifier) {
+        val viewModel: CharacterSelectViewModel = hiltViewModel()
+        val characters by viewModel.characters.collectAsState(initial = emptyList())
         var expandedCharacterId by remember { mutableStateOf<Int?>(null) }
-        
+
         CharacterSelectScreenImpl(
             modifier = modifier,
-            characters = dummyCharacters,
+            characters = characters,
             expandedCharacterId = expandedCharacterId,
             onCharacterExpand = { expandedCharacterId = it },
             onCharacterCollapse = { expandedCharacterId = null },
@@ -101,12 +105,12 @@ class CharacterSelectScreenImpl @Inject constructor() : CharacterSelectScreen {
 @Composable
 private fun CharacterSelectScreenImpl(
     modifier: Modifier = Modifier,
-    characters: List<CharacterData> = emptyList(),
+    characters: List<CharacterListItem> = emptyList(),
     expandedCharacterId: Int? = null,
     onCharacterExpand: (Int) -> Unit = {},
     onCharacterCollapse: () -> Unit = {},
-    onCharacterDelete: (CharacterData) -> Unit = {},
-    onCharacterOpen: (CharacterData) -> Unit = {},
+    onCharacterDelete: (CharacterListItem) -> Unit = {},
+    onCharacterOpen: (CharacterListItem) -> Unit = {},
     onCreateNew: () -> Unit = {}
 ) {
     Column(
@@ -168,7 +172,7 @@ private fun EmptyState(
 @Composable
 private fun CharacterListItem(
     modifier: Modifier = Modifier,
-    character: CharacterData,
+    character: CharacterListItem,
     isExpanded: Boolean,
     onExpand: () -> Unit,
     onCollapse: () -> Unit,
@@ -228,10 +232,10 @@ private fun CharacterListItem(
                 ) {
                     Text(
                         text = buildString {
-                            append("STR: ${character.strength} ")
-                            append("AGI: ${character.agility} ")
-                            append("PRES: ${character.presence} ")
-                            append("TGH: ${character.toughness}")
+                            append("STR: ${character.str} ")
+                            append("AGI: ${character.agi} ")
+                            append("PRES: ${character.pres} ")
+                            append("TGH: ${character.tgh}")
                         },
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -256,7 +260,26 @@ private fun CharacterSelectPreviewLight() {
     SoothsayerTheme(darkTheme = false) {
         Surface {
             CharacterSelectScreenImpl(
-                characters = dummyCharacters,
+                characters = listOf(
+                    CharacterListItem(
+                        characterId = 1,
+                        characterName = "Betsy the Brave",
+                        characterDescription = "A fearless warrior who lost her left eye in a tragic juggling accident.",
+                        str = 3,
+                        agi = -1,
+                        pres = 2,
+                        tgh = 0
+                    ),
+                    CharacterListItem(
+                        characterId = 2,
+                        characterName = "Grim the Unsanitary",
+                        characterDescription = "Former plague doctor turned doomsayer.",
+                        str = -2,
+                        agi = 1,
+                        pres = 3,
+                        tgh = -1
+                    )
+                ),
                 expandedCharacterId = 1
             )
         }
@@ -269,7 +292,26 @@ private fun CharacterSelectPreviewDark() {
     SoothsayerTheme(darkTheme = true) {
         Surface {
             CharacterSelectScreenImpl(
-                characters = dummyCharacters,
+                characters = listOf(
+                    CharacterListItem(
+                        characterId = 1,
+                        characterName = "Betsy the Brave",
+                        characterDescription = "A fearless warrior who lost her left eye in a tragic juggling accident.",
+                        str = 3,
+                        agi = -1,
+                        pres = 2,
+                        tgh = 0
+                    ),
+                    CharacterListItem(
+                        characterId = 2,
+                        characterName = "Grim the Unsanitary",
+                        characterDescription = "Former plague doctor turned doomsayer.",
+                        str = -2,
+                        agi = 1,
+                        pres = 3,
+                        tgh = -1
+                    )
+                ),
                 expandedCharacterId = 2
             )
         }
