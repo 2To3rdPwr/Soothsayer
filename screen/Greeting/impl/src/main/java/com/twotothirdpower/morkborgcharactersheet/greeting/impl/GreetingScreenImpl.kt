@@ -2,8 +2,12 @@ package com.twotothirdpower.morkborgcharactersheet.greeting.impl
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.OldNewspaper
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.SoothsayerTheme
+import com.twotothirdpower.morkborgcharactersheet.commonuiresources.R as commonUiR
 import com.twotothirdpower.morkborgcharactersheet.greeting.GreetingScreen
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -42,9 +47,11 @@ class GreetingScreenImpl @Inject constructor() : GreetingScreen {
             modifier = modifier
                 .fillMaxSize()
                 .paint(
-                    painterResource(id = R.drawable.mork_borg),
+                    painterResource(id = commonUiR.drawable.mork_borg),
                     contentScale = ContentScale.FillBounds
                 )
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .imePadding()
         ) {
             // License is required to be displayed upon app startup
             Text(

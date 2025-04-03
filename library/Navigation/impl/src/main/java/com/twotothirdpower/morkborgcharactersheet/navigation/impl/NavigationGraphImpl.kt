@@ -16,12 +16,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.twotothirdpower.morkborgcharactersheet.characterselect.CharacterSelectScreen
 import com.twotothirdpower.morkborgcharactersheet.charactersheet.CharacterSheetScreen
 import com.twotothirdpower.morkborgcharactersheet.greeting.GreetingScreen
 import com.twotothirdpower.morkborgcharactersheet.inventory.InventoryScreen
+import com.twotothirdpower.morkborgcharactersheet.managecharacter.ManageCharacterScreen
 import com.twotothirdpower.morkborgcharactersheet.navigation.NavigationGraph
 import com.twotothirdpower.morkborgcharactersheet.topnav.TopNavBar
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +36,8 @@ class NavigationGraphImpl @Inject constructor(
     private val characterSheetScreen: CharacterSheetScreen,
     private val inventoryScreen: InventoryScreen,
     private val greetingScreen: GreetingScreen,
-    private val topNavBar: TopNavBar
+    private val topNavBar: TopNavBar,
+    private val manageCharacterScreen: ManageCharacterScreen
 ) : NavigationGraph {
     @Composable
     override fun Content(
@@ -81,33 +85,59 @@ class NavigationGraphImpl @Inject constructor(
         ) {
             // Greeting screen - cannot be navigated back to
             composable(Screen.Greeting.route) {
-                EdgeToEdgeHandler(modifier, true) {
-                    greetingScreen.Content(
-                        modifier = modifier,
-                        onGreetingComplete = {
-                            navController.navigate(Screen.CharacterSheet.route) {
-                                popUpTo(Screen.Greeting.route) { inclusive = true }
-                            }
+                greetingScreen.Content(
+                    modifier = modifier,
+                    onGreetingComplete = {
+                        navController.navigate(Screen.CharacterSheet.route) {
+                            popUpTo(Screen.Greeting.route) { inclusive = true }
                         }
-                    )
-                }
+                    }
+                )
             }
 
             // Empty composables for routes that are handled by the pager
             composable(Screen.CharacterSelect.route) {
-                MainScreens(modifier, pagerState, coroutineScope)
+                MainScreens(modifier, pagerState, coroutineScope, navController)
             }
             composable(Screen.CharacterSheet.route) {
-                MainScreens(modifier, pagerState, coroutineScope)
+                MainScreens(modifier, pagerState, coroutineScope, navController)
             }
             composable(Screen.Inventory.route) {
-                MainScreens(modifier, pagerState, coroutineScope)
+                MainScreens(modifier, pagerState, coroutineScope, navController)
+            }
+
+            // ManageCharacter screen
+            composable(
+                route = Screen.ManageCharacter.routeWithOptionalArg,
+                arguments = listOf(
+                    navArgument(Screen.ManageCharacter.characterIdArg) {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                )
+            ) { backStackEntry ->
+                val characterId = backStackEntry.arguments?.getString(Screen.ManageCharacter.characterIdArg)?.toIntOrNull()
+                manageCharacterScreen.Content(
+                    modifier = modifier,
+                    characterId = characterId,
+                    onNavigateToCharacterSheet = {
+                        navController.navigate(Screen.CharacterSheet.route) {
+                            popUpTo(Screen.ManageCharacter.route) { inclusive = true }
+                        }
+                    }
+                )
             }
         }
     }
 
     @Composable
-    private fun MainScreens(modifier: Modifier, pagerState: PagerState, coroutineScope: CoroutineScope) {
+    private fun MainScreens(
+        modifier: Modifier,
+        pagerState: PagerState,
+        coroutineScope: CoroutineScope,
+        navController: NavHostController
+    ) {
         EdgeToEdgeHandler(modifier) {
             Column(modifier = modifier) {
                 topNavBar.Content(
@@ -124,7 +154,15 @@ class NavigationGraphImpl @Inject constructor(
                     modifier = modifier
                 ) { page ->
                     when (page) {
-                        0 -> characterSelectScreen.Content(modifier)
+                        0 -> characterSelectScreen.Content(
+                            modifier = modifier,
+                            onNavigateToNewCharacter = {
+                                navController.navigate(Screen.ManageCharacter.route)
+                            },
+                            onNavigateToEditCharacter = { characterId ->
+                                navController.navigate(Screen.ManageCharacter.routeWithArgs(characterId))
+                            }
+                        )
                         1 -> characterSheetScreen.Content(modifier)
                         2 -> inventoryScreen.Content(modifier)
                     }
@@ -169,5 +207,14 @@ class NavigationGraphImpl @Inject constructor(
         object CharacterSelect : Screen("character_select")
         object CharacterSheet : Screen("character_sheet")
         object Inventory : Screen("inventory")
+        object ManageCharacter : Screen("manage_character") {
+            const val characterIdArg = "characterId"
+            val routeWithOptionalArg = "$route?$characterIdArg={$characterIdArg}"
+            
+            fun routeWithArgs(characterId: Int? = null) = when (characterId) {
+                null -> route
+                else -> "$route?$characterIdArg=$characterId"
+            }
+        }
     }
 } 

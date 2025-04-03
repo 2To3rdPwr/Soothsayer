@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":screen:CharacterSelect:public"))
     implementation(project(":screen:CharacterSheet:public"))
     implementation(project(":screen:InventoryScreen:public"))
+    implementation(project(":screen:ManageCharacter:public"))
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.navigation.compose)

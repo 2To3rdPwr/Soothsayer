@@ -35,10 +35,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.twotothirdpower.morkborgcharactersheet.domain.models.CharacterListItem
+import dagger.hilt.android.scopes.ActivityScoped
+import javax.inject.Inject
 
-class CharacterSelectScreenImpl : CharacterSelectScreen {
+@ActivityScoped
+class CharacterSelectScreenImpl @Inject constructor() : CharacterSelectScreen {
     @Composable
-    override fun Content(modifier: Modifier) {
+    override fun Content(
+        modifier: Modifier,
+        onNavigateToNewCharacter: () -> Unit,
+        onNavigateToEditCharacter: (Int) -> Unit
+    ) {
         val viewModel: CharacterSelectViewModel = hiltViewModel()
         val characters by viewModel.characters.collectAsState(initial = emptyList())
         var expandedCharacterId by remember { mutableStateOf<Int?>(null) }
@@ -50,8 +57,8 @@ class CharacterSelectScreenImpl : CharacterSelectScreen {
             onCharacterExpand = { expandedCharacterId = it },
             onCharacterCollapse = { expandedCharacterId = null },
             onCharacterDelete = { viewModel.deleteCharacter(it) },
-            onCharacterOpen = { /* TODO */ },
-            onCreateNew = { viewModel.addNewCharacter() }
+            onCharacterOpen = { onNavigateToEditCharacter(it.characterId) },
+            onCreateNew = onNavigateToNewCharacter
         )
     }
 }

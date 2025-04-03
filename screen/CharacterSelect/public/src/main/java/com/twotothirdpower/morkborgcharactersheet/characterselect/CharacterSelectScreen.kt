@@ -5,5 +5,9 @@ import androidx.compose.ui.Modifier
 
 interface CharacterSelectScreen {
     @Composable
-    fun Content(modifier: Modifier)
+    fun Content(
+        modifier: Modifier,
+        onNavigateToNewCharacter: () -> Unit,
+        onNavigateToEditCharacter: (Int) -> Unit
+    )
 } 
