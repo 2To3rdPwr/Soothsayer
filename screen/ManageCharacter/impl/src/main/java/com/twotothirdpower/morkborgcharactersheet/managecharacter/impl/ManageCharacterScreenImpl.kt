@@ -2,6 +2,7 @@ package com.twotothirdpower.morkborgcharactersheet.managecharacter.impl
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.GraveDigger
@@ -38,6 +40,9 @@ import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.R as CommonUiR
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 
 @ActivityScoped
 class ManageCharacterScreenImpl @Inject constructor() : ManageCharacterScreen {
@@ -105,40 +110,44 @@ private fun NewState(
             .windowInsetsPadding(WindowInsets.navigationBars)
             .imePadding()
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
                 onClick = onResignToFate,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Red,
                     contentColor = Color.White
-                )
+                ),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
-                    text = "Resign yourself to fate",
-                    fontFamily = GraveDigger
+                    text = "Resign yourself\nto fate",
+                    fontFamily = GraveDigger,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             
-            Spacer(modifier = Modifier.padding(8.dp))
-            
             Button(
                 onClick = onDecideDestiny,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Red,
                     contentColor = Color.White
-                )
+                ),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
-                    text = "Decide your own destiny",
-                    fontFamily = GraveDigger
+                    text = "Decide your own\ndestiny",
+                    fontFamily = GraveDigger,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
         }
