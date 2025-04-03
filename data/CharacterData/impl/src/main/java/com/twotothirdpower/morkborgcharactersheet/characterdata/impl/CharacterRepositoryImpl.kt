@@ -6,25 +6,25 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(
-    private val characterDao: CharacterDao
+    private val dao: CharacterDao
 ) : CharacterRepository {
     override fun getAllCharacters(): Flow<List<CharacterData>> {
-        return characterDao.getAllCharacters()
+        return dao.getAllCharacters()
     }
 
-    override fun getCharacterById(id: Int): Flow<CharacterData?> {
-        return characterDao.getCharacterById(id)
+    override fun getCharacterById(characterId: Int): Flow<CharacterData?> {
+        return dao.getCharacterById(characterId)
     }
 
     override suspend fun insertCharacter(character: CharacterData) {
-        characterDao.insertCharacter(character)
+        dao.insertCharacter(character)
     }
 
     override suspend fun updateCharacter(character: CharacterData) {
-        characterDao.updateCharacter(character)
+        dao.updateCharacter(character)
     }
 
-    override suspend fun deleteCharacter(character: CharacterData) {
-        characterDao.deleteCharacter(character)
+    override suspend fun deleteCharacter(characterId: Int) {
+        dao.deleteCharacter(characterId)
     }
 } 

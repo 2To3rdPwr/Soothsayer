@@ -1,7 +1,10 @@
 package com.twotothirdpower.morkborgcharactersheet.characterdata.impl
 
-import androidx.room.*
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterData
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +22,6 @@ interface CharacterDao {
     @Update
     suspend fun updateCharacter(character: CharacterData)
 
-    @Delete
-    suspend fun deleteCharacter(character: CharacterData)
+    @Query("DELETE FROM characters WHERE characterId = :characterId")
+    suspend fun deleteCharacter(characterId: Int)
 } 

@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterData
 import com.twotothirdpower.morkborgcharactersheet.characterselect.CharacterSelectScreen
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.SoothsayerTheme
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,51 +35,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.twotothirdpower.morkborgcharactersheet.domain.models.CharacterListItem
-
-private val dummyCharacters = listOf(
-    CharacterData(
-        characterId = 1,
-        lastChanged = System.currentTimeMillis(),
-        characterName = "Betsy the Brave",
-        characterDescription = "A fearless warrior who lost her left eye in a tragic juggling accident. Now she seeks redemption through violence and mayhem.",
-        currentHp = 6,
-        maxHp = 8,
-        currentOmens = 2,
-        currentPowers = 1,
-        strength = 3,
-        agility = -1,
-        presence = 2,
-        toughness = 0
-    ),
-    CharacterData(
-        characterId = 2,
-        lastChanged = System.currentTimeMillis() - 86400000, // 1 day ago
-        characterName = "Grim the Unsanitary",
-        characterDescription = "Former plague doctor turned doomsayer. Carries a collection of suspicious herbs and definitely cursed trinkets.",
-        currentHp = 4,
-        maxHp = 4,
-        currentOmens = 0,
-        currentPowers = 3,
-        strength = -2,
-        agility = 1,
-        presence = 3,
-        toughness = -1
-    ),
-    CharacterData(
-        characterId = 3,
-        lastChanged = System.currentTimeMillis() - 172800000, // 2 days ago
-        characterName = "Krax the Uncertain",
-        characterDescription = "A retired accountant who accidentally made a pact with an elder god while doing taxes.",
-        currentHp = 2,
-        maxHp = 6,
-        currentOmens = 1,
-        currentPowers = 2,
-        strength = 0,
-        agility = 0,
-        presence = -2,
-        toughness = 1
-    )
-)
 
 class CharacterSelectScreenImpl : CharacterSelectScreen {
     @Composable
@@ -95,9 +49,9 @@ class CharacterSelectScreenImpl : CharacterSelectScreen {
             expandedCharacterId = expandedCharacterId,
             onCharacterExpand = { expandedCharacterId = it },
             onCharacterCollapse = { expandedCharacterId = null },
-            onCharacterDelete = { /* TODO */ },
+            onCharacterDelete = { viewModel.deleteCharacter(it) },
             onCharacterOpen = { /* TODO */ },
-            onCreateNew = { /* TODO */ }
+            onCreateNew = { viewModel.addNewCharacter() }
         )
     }
 }
