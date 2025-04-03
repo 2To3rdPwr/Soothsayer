@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":data:CharacterData:public"))
     implementation(project(":data:Domain:public"))
     implementation(project(":library:CommonUiResources"))
+    implementation(project(":library:Snackbar:public"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.androidx.compose.bom))

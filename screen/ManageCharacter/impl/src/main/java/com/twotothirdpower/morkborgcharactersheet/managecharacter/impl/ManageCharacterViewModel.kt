@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterData
 import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterRepository
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GenerateRandomCharacterUseCase
+import com.twotothirdpower.morkborgcharactersheet.domain.usecases.ImproveCharacterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,20 +30,25 @@ sealed interface ManageCharacterUiState {
         val strengthError: Boolean = false,
         val agilityError: Boolean = false,
         val presenceError: Boolean = false,
-        val toughnessError: Boolean = false
+        val toughnessError: Boolean = false,
+        val hpError: Boolean = false
     ) : ManageCharacterUiState
 }
 
 @HiltViewModel
 class ManageCharacterViewModel @Inject constructor(
     private val generateRandomCharacterUseCase: GenerateRandomCharacterUseCase,
-    private val characterRepository: CharacterRepository
+    private val characterRepository: CharacterRepository,
+    private val improveCharacterUseCase: ImproveCharacterUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ManageCharacterUiState>(ManageCharacterUiState.New)
     val uiState: StateFlow<ManageCharacterUiState> = _uiState
 
     private val _saveComplete = MutableSharedFlow<Unit>()
     val saveComplete: SharedFlow<Unit> = _saveComplete
+
+    private val _validationError = MutableSharedFlow<String>()
+    val validationError: SharedFlow<String> = _validationError
 
     fun generateRandomCharacter() {
         viewModelScope.launch {
@@ -87,14 +93,17 @@ class ManageCharacterViewModel @Inject constructor(
 
     fun updateHp(hp: Int) {
         val currentState = _uiState.value as? ManageCharacterUiState.Edit ?: return
-        _uiState.value = currentState.copy(hp = hp)
+        _uiState.value = currentState.copy(
+            hp = hp,
+            hpError = hp < 1
+        )
     }
 
     fun updateStrength(strength: Int) {
         val currentState = _uiState.value as? ManageCharacterUiState.Edit ?: return
         _uiState.value = currentState.copy(
             strength = strength,
-            strengthError = false
+            strengthError = strength !in -3..6
         )
     }
 
@@ -102,7 +111,7 @@ class ManageCharacterViewModel @Inject constructor(
         val currentState = _uiState.value as? ManageCharacterUiState.Edit ?: return
         _uiState.value = currentState.copy(
             agility = agility,
-            agilityError = false
+            agilityError = agility !in -3..6
         )
     }
 
@@ -110,7 +119,7 @@ class ManageCharacterViewModel @Inject constructor(
         val currentState = _uiState.value as? ManageCharacterUiState.Edit ?: return
         _uiState.value = currentState.copy(
             presence = presence,
-            presenceError = false
+            presenceError = presence !in -3..6
         )
     }
 
@@ -118,34 +127,49 @@ class ManageCharacterViewModel @Inject constructor(
         val currentState = _uiState.value as? ManageCharacterUiState.Edit ?: return
         _uiState.value = currentState.copy(
             toughness = toughness,
-            toughnessError = false
+            toughnessError = toughness !in -3..6
         )
     }
 
-    private fun validateCharacter(state: ManageCharacterUiState.Edit): Boolean {
-        var isValid = true
-        val updatedState = state.copy(
-            nameError = state.name.isBlank(),
-            strengthError = state.strength !in 0..6,
-            agilityError = state.agility !in 0..6,
-            presenceError = state.presence !in 0..6,
-            toughnessError = state.toughness !in 0..6
+    private fun validateStats(state: ManageCharacterUiState.Edit): Boolean {
+        val strengthValid = state.strength in -3..6
+        val agilityValid = state.agility in -3..6
+        val presenceValid = state.presence in -3..6
+        val toughnessValid = state.toughness in -3..6
+        val hpValid = state.hp >= 1
+        val nameValid = state.name.isNotBlank()
+
+        _uiState.value = state.copy(
+            nameError = !nameValid,
+            strengthError = !strengthValid,
+            agilityError = !agilityValid,
+            presenceError = !presenceValid,
+            toughnessError = !toughnessValid,
+            hpError = !hpValid
         )
-        
-        if (updatedState.nameError || updatedState.strengthError || 
-            updatedState.agilityError || updatedState.presenceError || 
-            updatedState.toughnessError) {
-            isValid = false
-            _uiState.value = updatedState
+
+        val errorMessage = when {
+            !strengthValid -> "Strength must be between -3 and 6"
+            !agilityValid -> "Agility must be between -3 and 6"
+            !presenceValid -> "Presence must be between -3 and 6"
+            !toughnessValid -> "Toughness must be between -3 and 6"
+            !hpValid -> "HP must be at least 1"
+            else -> null
         }
-        
-        return isValid
+
+        errorMessage?.let {
+            viewModelScope.launch {
+                _validationError.emit(it)
+            }
+        }
+
+        return errorMessage == null && nameValid
     }
 
     fun saveCharacter() {
         val currentState = _uiState.value as? ManageCharacterUiState.Edit ?: return
         
-        if (!validateCharacter(currentState)) {
+        if (!validateStats(currentState)) {
             return
         }
 
@@ -166,6 +190,22 @@ class ManageCharacterViewModel @Inject constructor(
             )
             characterRepository.insertCharacter(character)
             _saveComplete.emit(Unit)
+        }
+    }
+
+    fun improveCharacter() {
+        val currentState = _uiState.value as? ManageCharacterUiState.Edit ?: return
+        val characterId = currentState.characterId ?: return
+
+        viewModelScope.launch {
+            val character = characterRepository.getCharacterById(characterId).first() ?: return@launch
+            val improvedCharacter = improveCharacterUseCase(character)
+            _uiState.value = currentState.copy(
+                strength = improvedCharacter.strength,
+                agility = improvedCharacter.agility,
+                presence = improvedCharacter.presence,
+                toughness = improvedCharacter.toughness
+            )
         }
     }
 } 
