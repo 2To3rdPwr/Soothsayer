@@ -1,6 +1,6 @@
 package com.twotothirdpower.morkborgcharactersheet.characterdata.impl
 
-import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterData
+import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -27,7 +27,7 @@ class CharacterRepositoryImplTest {
 
     @Test
     fun `getAllCharacters returns flow from dao`() = runTest {
-        val testFlow: Flow<List<CharacterData>> = flowOf(listOf(createTestCharacter()))
+        val testFlow: Flow<List<CharacterEntity>> = flowOf(listOf(createTestCharacter()))
         coEvery { characterDao.getAllCharacters() } returns testFlow
 
         val result = repository.getAllCharacters()
@@ -39,7 +39,7 @@ class CharacterRepositoryImplTest {
     @Test
     fun `getCharacterById returns character flow from dao`() = runTest {
         val testCharacter = createTestCharacter()
-        val testFlow: Flow<CharacterData> = flowOf(testCharacter)
+        val testFlow: Flow<CharacterEntity> = flowOf(testCharacter)
         coEvery { characterDao.getCharacterById(1) } returns testFlow
 
         val result = repository.getCharacterById(1)
@@ -71,14 +71,14 @@ class CharacterRepositoryImplTest {
     @Test
     fun `deleteCharacter calls dao delete`() = runTest {
         val testCharacter = createTestCharacter()
-        coEvery { characterDao.deleteCharacter(testCharacter) } just runs
+        coEvery { characterDao.deleteCharacter(testCharacter.characterId) } just runs
 
-        repository.deleteCharacter(testCharacter)
+        repository.deleteCharacter(testCharacter.characterId)
 
-        coVerify { characterDao.deleteCharacter(testCharacter) }
+        coVerify { characterDao.deleteCharacter(testCharacter.characterId) }
     }
 
-    private fun createTestCharacter() = CharacterData(
+    private fun createTestCharacter() = CharacterEntity(
         characterId = 1,
         lastChanged = System.currentTimeMillis(),
         characterName = "Test Character",

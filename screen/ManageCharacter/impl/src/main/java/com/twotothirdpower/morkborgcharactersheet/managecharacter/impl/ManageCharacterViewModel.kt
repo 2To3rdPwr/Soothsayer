@@ -2,10 +2,11 @@ package com.twotothirdpower.morkborgcharactersheet.managecharacter.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterData
-import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterRepository
+import com.twotothirdpower.morkborgcharactersheet.domain.models.CharacterData
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GenerateRandomCharacterUseCase
+import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetCharacterUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.ImproveCharacterUseCase
+import com.twotothirdpower.morkborgcharactersheet.domain.usecases.SaveCharacterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +39,8 @@ sealed interface ManageCharacterUiState {
 @HiltViewModel
 class ManageCharacterViewModel @Inject constructor(
     private val generateRandomCharacterUseCase: GenerateRandomCharacterUseCase,
-    private val characterRepository: CharacterRepository,
+    private val getCharacterUseCase: GetCharacterUseCase,
+    private val saveCharacterUseCase: SaveCharacterUseCase,
     private val improveCharacterUseCase: ImproveCharacterUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ManageCharacterUiState>(ManageCharacterUiState.New)
@@ -58,7 +60,7 @@ class ManageCharacterViewModel @Inject constructor(
 
     fun loadCharacter(characterId: Int) {
         viewModelScope.launch {
-            val character = characterRepository.getCharacterById(characterId).first()
+            val character = getCharacterUseCase(characterId).first()
             character?.let { char ->
                 _uiState.value = ManageCharacterUiState.Edit(
                     characterId = char.characterId,
@@ -188,7 +190,7 @@ class ManageCharacterViewModel @Inject constructor(
                 toughness = currentState.toughness,
                 lastChanged = System.currentTimeMillis()
             )
-            characterRepository.insertCharacter(character)
+            saveCharacterUseCase(character)
             _saveComplete.emit(Unit)
         }
     }
@@ -198,7 +200,7 @@ class ManageCharacterViewModel @Inject constructor(
         val characterId = currentState.characterId ?: return
 
         viewModelScope.launch {
-            val character = characterRepository.getCharacterById(characterId).first() ?: return@launch
+            val character = getCharacterUseCase(characterId).first() ?: return@launch
             val improvedCharacter = improveCharacterUseCase(character)
             _uiState.value = currentState.copy(
                 strength = improvedCharacter.strength,

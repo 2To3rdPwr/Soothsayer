@@ -1,7 +1,9 @@
 package com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases
 
-import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterData
+import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterEntity
 import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterRepository
+import com.twotothirdpower.morkborgcharactersheet.domain.impl.models.toDomain
+import com.twotothirdpower.morkborgcharactersheet.domain.models.CharacterData
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GenerateRandomCharacterUseCase
 import javax.inject.Inject
 import kotlin.random.Random
@@ -37,7 +39,7 @@ class GenerateRandomCharacterUseCaseImpl @Inject constructor(
     )
 
     override suspend fun invoke(): CharacterData {
-        val character = CharacterData(
+        val entity = CharacterEntity(
             characterId = 0,
             characterName = names.random(),
             characterDescription = descriptions.random(),
@@ -51,7 +53,7 @@ class GenerateRandomCharacterUseCaseImpl @Inject constructor(
             toughness = Random.nextInt(-3, 7),
             lastChanged = System.currentTimeMillis()
         )
-        repository.insertCharacter(character)
-        return character
+        repository.insertCharacter(entity)
+        return entity.toDomain()
     }
 } 

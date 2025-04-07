@@ -43,7 +43,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(project(":screen:CharacterSelect:public"))
-    implementation(project(":data:CharacterData:public"))
     implementation(project(":library:CommonUiResources"))
     implementation(project(":data:Domain:public"))
     implementation(libs.androidx.runtime.android)

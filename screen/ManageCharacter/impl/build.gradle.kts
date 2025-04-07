@@ -43,7 +43,6 @@ android {
 
 dependencies {
     implementation(project(":screen:ManageCharacter:public"))
-    implementation(project(":data:CharacterData:public"))
     implementation(project(":data:Domain:public"))
     implementation(project(":library:CommonUiResources"))
     implementation(project(":library:Snackbar:public"))

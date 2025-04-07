@@ -1,15 +1,17 @@
-package com.twotothirdpower.morkborgcharactersheet.domain.impl
+package com.twotothirdpower.morkborgcharactersheet.domain.impl.DI
 
-import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.AddCharacterUseCaseImpl
 import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.DeleteCharacterUseCaseImpl
 import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.GenerateRandomCharacterUseCaseImpl
+import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.GetCharacterUseCaseImpl
 import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.GetCharactersListUseCaseImpl
 import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.ImproveCharacterUseCaseImpl
-import com.twotothirdpower.morkborgcharactersheet.domain.usecases.AddCharacterUseCase
+import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.SaveCharacterUseCaseImpl
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.DeleteCharacterUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GenerateRandomCharacterUseCase
+import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetCharacterUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetCharactersListUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.ImproveCharacterUseCase
+import com.twotothirdpower.morkborgcharactersheet.domain.usecases.SaveCharacterUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -27,9 +29,9 @@ interface DomainModule {
 
     @Binds
     @Singleton
-    fun bindAddCharacterUseCase(
-        impl: AddCharacterUseCaseImpl
-    ): AddCharacterUseCase
+    fun bindSaveCharacterUseCase(
+        impl: SaveCharacterUseCaseImpl
+    ): SaveCharacterUseCase
 
     @Binds
     @Singleton
@@ -48,4 +50,10 @@ interface DomainModule {
     fun bindImproveCharacterUseCase(
         impl: ImproveCharacterUseCaseImpl
     ): ImproveCharacterUseCase
+    
+    @Binds
+    @Singleton
+    fun bindGetCharacterUseCase(
+        impl: GetCharacterUseCaseImpl
+    ): GetCharacterUseCase
 } 

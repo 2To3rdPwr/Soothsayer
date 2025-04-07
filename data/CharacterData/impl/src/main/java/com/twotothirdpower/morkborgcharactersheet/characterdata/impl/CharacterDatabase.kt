@@ -2,10 +2,10 @@ package com.twotothirdpower.morkborgcharactersheet.characterdata.impl
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterData
+import com.twotothirdpower.morkborgcharactersheet.characterdata.CharacterEntity
 
 @Database(
-    entities = [CharacterData::class],
+    entities = [CharacterEntity::class],
     version = 1,
     exportSchema = false
 )
