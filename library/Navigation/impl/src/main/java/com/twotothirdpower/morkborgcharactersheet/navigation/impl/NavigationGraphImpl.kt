@@ -1,5 +1,7 @@
 package com.twotothirdpower.morkborgcharactersheet.navigation.impl
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -125,7 +127,11 @@ class NavigationGraphImpl @Inject constructor(
                         nullable = true
                         defaultValue = null
                     }
-                )
+                ),
+                enterTransition = { fadeIn(animationSpec = tween(300)) },
+                exitTransition = { fadeOut(animationSpec = tween(300)) },
+                popEnterTransition = { fadeIn(animationSpec = tween(300)) },
+                popExitTransition = { fadeOut(animationSpec = tween(300)) }
             ) { backStackEntry ->
                 val characterId = backStackEntry.arguments?.getString(Screen.ManageCharacter.characterIdArg)?.toIntOrNull()
                 manageCharacterScreen.Content(
@@ -183,6 +189,9 @@ class NavigationGraphImpl @Inject constructor(
                             modifier = modifier,
                             onCharacterNameChanged = { name ->
                                 characterName = name
+                            },
+                            onEditCharacter = { characterId ->
+                                navController.navigate(Screen.ManageCharacter.routeWithArgs(characterId))
                             }
                         )
                         2 -> inventoryScreen.Content(modifier)

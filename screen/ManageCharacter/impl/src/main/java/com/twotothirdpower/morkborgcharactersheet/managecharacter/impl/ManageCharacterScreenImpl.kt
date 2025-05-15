@@ -110,6 +110,29 @@ class ManageCharacterScreenImpl @Inject constructor() : ManageCharacterScreen {
                 },
                 onDecideDestiny = viewModel::switchToEditState
             )
+            is ManageCharacterUiState.LoadingEdit -> EditState(
+                state = ManageCharacterUiState.Edit(
+                    characterId = (uiState as ManageCharacterUiState.LoadingEdit).characterId,
+                    name = "",
+                    description = "",
+                    hp = 10,
+                    strength = 0,
+                    agility = 0,
+                    presence = 0,
+                    toughness = 0
+                ),
+                modifier = modifier,
+                onNameChange = {},
+                onDescriptionChange = {},
+                onHpChange = {},
+                onStrengthChange = {},
+                onAgilityChange = {},
+                onPresenceChange = {},
+                onToughnessChange = {},
+                onSave = {},
+                onImprove = {},
+                disabled = true
+            )
             is ManageCharacterUiState.Edit -> EditState(
                 state = uiState as ManageCharacterUiState.Edit,
                 modifier = modifier,
@@ -121,7 +144,8 @@ class ManageCharacterScreenImpl @Inject constructor() : ManageCharacterScreen {
                 onPresenceChange = viewModel::updatePresence,
                 onToughnessChange = viewModel::updateToughness,
                 onSave = viewModel::saveCharacter,
-                onImprove = viewModel::improveCharacter
+                onImprove = viewModel::improveCharacter,
+                disabled = false
             )
         }
     }
@@ -192,7 +216,8 @@ private fun StatTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    isError: Boolean = false
+    isError: Boolean = false,
+    enabled: Boolean = true
 ) {
     var isFocused by remember { mutableStateOf(false) }
     
@@ -219,7 +244,8 @@ private fun StatTextField(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .onFocusChanged { isFocused = it.isFocused },
-                cursorBrush = SolidColor(Red)
+                cursorBrush = SolidColor(Red),
+                enabled = enabled
             )
         }
         Spacer(
@@ -244,7 +270,8 @@ private fun EditState(
     onPresenceChange: (Int) -> Unit = {},
     onToughnessChange: (Int) -> Unit = {},
     onSave: () -> Unit = {},
-    onImprove: () -> Unit = {}
+    onImprove: () -> Unit = {},
+    disabled: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -290,7 +317,8 @@ private fun EditState(
                         backgroundColor = Red.copy(alpha = 0.2f),
                         handleColor = Red
                     )
-                )
+                ),
+                enabled = !disabled
             )
 
             if (state.characterId != null) {
@@ -342,7 +370,8 @@ private fun EditState(
                     backgroundColor = Red.copy(alpha = 0.2f),
                     handleColor = Red
                 )
-            )
+            ),
+            enabled = !disabled
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -373,7 +402,8 @@ private fun EditState(
                         onValueChange = { value ->
                             value.toIntOrNull()?.let { onAgilityChange(it) }
                         },
-                        isError = state.agilityError
+                        isError = state.agilityError,
+                        enabled = !disabled
                     )
                 }
 
@@ -394,7 +424,8 @@ private fun EditState(
                         onValueChange = { value ->
                             value.toIntOrNull()?.let { onToughnessChange(it) }
                         },
-                        isError = state.toughnessError
+                        isError = state.toughnessError,
+                        enabled = !disabled
                     )
                 }
             }
@@ -415,7 +446,8 @@ private fun EditState(
                         onValueChange = { value ->
                             value.toIntOrNull()?.let { onStrengthChange(it) }
                         },
-                        isError = state.strengthError
+                        isError = state.strengthError,
+                        enabled = !disabled
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -436,7 +468,8 @@ private fun EditState(
                         onValueChange = { value ->
                             value.toIntOrNull()?.let { onPresenceChange(it) }
                         },
-                        isError = state.presenceError
+                        isError = state.presenceError,
+                        enabled = !disabled
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -457,7 +490,8 @@ private fun EditState(
                         onValueChange = { value ->
                             value.toIntOrNull()?.let { onHpChange(it) }
                         },
-                        isError = state.hpError
+                        isError = state.hpError,
+                        enabled = !disabled
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(

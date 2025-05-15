@@ -7,6 +7,7 @@ interface CharacterSheetScreen {
     @Composable
     fun Content(
         modifier: Modifier,
-        onCharacterNameChanged: (String?) -> Unit
+        onCharacterNameChanged: (String?) -> Unit,
+        onEditCharacter: (Int) -> Unit
     )
 } 

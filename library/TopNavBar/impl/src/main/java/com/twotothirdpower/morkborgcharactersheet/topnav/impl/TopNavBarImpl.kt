@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import android.content.res.Configuration
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.SoothsayerTheme
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.text.style.TextOverflow
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.Black
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.CutTheCrap
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.Red
@@ -57,7 +58,9 @@ class TopNavBarImpl @Inject constructor() : TopNavBar {
                             text = item.label,
                             color = if (selectedTab == item.index) Red else Black,
                             fontFamily = CutTheCrap,
-                            fontSize = 18.sp
+                            fontSize = 18.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
                         )
                     }
                 )

@@ -18,6 +18,7 @@ import javax.inject.Inject
 
 sealed interface ManageCharacterUiState {
     data object New : ManageCharacterUiState
+    data class LoadingEdit(val characterId: Int) : ManageCharacterUiState
     data class Edit(
         val characterId: Int? = null,
         val name: String = "",
@@ -59,6 +60,7 @@ class ManageCharacterViewModel @Inject constructor(
     }
 
     fun loadCharacter(characterId: Int) {
+        _uiState.value = ManageCharacterUiState.LoadingEdit(characterId)
         viewModelScope.launch {
             val character = getCharacterUseCase(characterId).first()
             character?.let { char ->

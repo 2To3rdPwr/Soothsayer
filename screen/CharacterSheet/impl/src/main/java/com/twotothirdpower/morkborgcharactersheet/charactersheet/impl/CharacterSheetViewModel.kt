@@ -2,6 +2,7 @@ package com.twotothirdpower.morkborgcharactersheet.charactersheet.impl
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.twotothirdpower.morkborgcharactersheet.domain.models.CharacterData
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetMostRecentCharacterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,15 +20,20 @@ class CharacterSheetViewModel @Inject constructor(
     private val _characterName = MutableStateFlow<String?>(null)
     val characterName: StateFlow<String?> = _characterName
 
+    private val _character = MutableStateFlow<CharacterData?>(null)
+    val character: StateFlow<CharacterData?> = _character
+
     init {
         viewModelScope.launch {
             getMostRecentCharacterUseCase()
                 .catch { e ->
                     Log.e("CharacterSheetViewModel", "Error loading character", e)
                     _characterName.value = null
+                    _character.value = null
                 }
                 .onEach { character ->
                     _characterName.value = character?.characterName
+                    _character.value = character
                 }
                 .collect { }
         }
