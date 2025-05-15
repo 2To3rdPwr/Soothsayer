@@ -13,7 +13,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -144,6 +148,9 @@ class NavigationGraphImpl @Inject constructor(
         coroutineScope: CoroutineScope,
         navController: NavHostController
     ) {
+        // Use a remembered state for the character name
+        var characterName by remember { mutableStateOf<String?>(null) }
+        
         EdgeToEdgeHandler(modifier) {
             Column(modifier = modifier) {
                 topNavBar.Content(
@@ -153,7 +160,8 @@ class NavigationGraphImpl @Inject constructor(
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(index)
                         }
-                    }
+                    },
+                    characterName = characterName
                 )
                 HorizontalPager(
                     state = pagerState,
@@ -171,7 +179,12 @@ class NavigationGraphImpl @Inject constructor(
                                 }
                             }
                         )
-                        1 -> characterSheetScreen.Content(modifier)
+                        1 -> characterSheetScreen.Content(
+                            modifier = modifier,
+                            onCharacterNameChanged = { name ->
+                                characterName = name
+                            }
+                        )
                         2 -> inventoryScreen.Content(modifier)
                     }
                 }

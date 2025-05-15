@@ -8,6 +8,7 @@ interface TopNavBar {
     fun Content(
         modifier: Modifier,
         selectedTab: Int,
-        onTabSelected: (Int) -> Unit
+        onTabSelected: (Int) -> Unit,
+        characterName: String?
     )
 } 

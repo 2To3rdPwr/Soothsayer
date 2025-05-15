@@ -5,5 +5,8 @@ import androidx.compose.ui.Modifier
 
 interface CharacterSheetScreen {
     @Composable
-    fun Content(modifier: Modifier)
+    fun Content(
+        modifier: Modifier,
+        onCharacterNameChanged: (String?) -> Unit
+    )
 } 

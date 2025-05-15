@@ -22,7 +22,8 @@ class TopNavBarImpl @Inject constructor() : TopNavBar {
     override fun Content(
         modifier: Modifier,
         selectedTab: Int,
-        onTabSelected: (Int) -> Unit
+        onTabSelected: (Int) -> Unit,
+        characterName: String?
     ) {
         val items = listOf(
             NavigationItem(
@@ -31,7 +32,7 @@ class TopNavBarImpl @Inject constructor() : TopNavBar {
             ),
             NavigationItem(
                 index = 1,
-                label = "Sheet"
+                label = characterName ?: "Sheet"
             ),
             NavigationItem(
                 index = 2,
@@ -77,7 +78,8 @@ fun TopNavBarLightPreview() {
         TopNavBarImpl().Content(
             modifier = Modifier,
             selectedTab = 0,
-            onTabSelected = {}
+            onTabSelected = {},
+            characterName = null
         )
     }
 }
@@ -89,7 +91,8 @@ fun TopNavBarDarkPreview() {
         TopNavBarImpl().Content(
             modifier = Modifier,
             selectedTab = 1,
-            onTabSelected = {}
+            onTabSelected = {},
+            characterName = "Betsy the Brave"
         )
     }
 } 
