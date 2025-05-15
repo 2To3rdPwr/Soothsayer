@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -162,7 +163,8 @@ private fun CharacterListItem(
                 IconButton(onClick = onOpen) {
                     Icon(
                         painter = painterResource(id = R.drawable.up_arrow),
-                        contentDescription = "Open ${character.characterName}"
+                        contentDescription = "Open ${character.characterName}",
+                        modifier = Modifier.rotate(90f)
                     )
                 }
             }
