@@ -8,6 +8,6 @@ interface CharacterSelectScreen {
     fun Content(
         modifier: Modifier,
         onNavigateToNewCharacter: () -> Unit,
-        onNavigateToEditCharacter: (Int) -> Unit
+        onNavigateToCharacterSheet: () -> Unit
     )
 } 

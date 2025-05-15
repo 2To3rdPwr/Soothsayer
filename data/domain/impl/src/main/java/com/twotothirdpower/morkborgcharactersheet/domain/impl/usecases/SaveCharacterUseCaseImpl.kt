@@ -11,7 +11,9 @@ class SaveCharacterUseCaseImpl @Inject constructor(
     private val repository: CharacterRepository
 ) : SaveCharacterUseCase {
     override suspend fun invoke(character: CharacterData): CharacterData {
-        val entity = character.toEntity()
+        val now = System.currentTimeMillis()
+        val updatedCharacter = character.copy(lastChanged = now)
+        val entity = updatedCharacter.toEntity()
         
         // If characterId is 0, it's a new character, otherwise update existing
         if (character.characterId == 0) {

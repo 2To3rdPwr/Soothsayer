@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -37,6 +38,7 @@ import com.twotothirdpower.morkborgcharactersheet.commonuiresources.R
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.twotothirdpower.morkborgcharactersheet.domain.models.CharacterListItem
 import dagger.hilt.android.scopes.ActivityScoped
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @ActivityScoped
@@ -45,11 +47,19 @@ class CharacterSelectScreenImpl @Inject constructor() : CharacterSelectScreen {
     override fun Content(
         modifier: Modifier,
         onNavigateToNewCharacter: () -> Unit,
-        onNavigateToEditCharacter: (Int) -> Unit
+        onNavigateToCharacterSheet: () -> Unit
     ) {
         val viewModel: CharacterSelectViewModel = hiltViewModel()
         val characters by viewModel.characters.collectAsState(initial = emptyList())
         var expandedCharacterId by remember { mutableStateOf<Int?>(null) }
+        
+        // Handle navigation events from ViewModel
+        LaunchedEffect(Unit) {
+            viewModel.navigateToCharacterSheet.collectLatest { _ ->
+                // Navigate to CharacterSheet when user selects a character
+                onNavigateToCharacterSheet()
+            }
+        }
 
         CharacterSelectScreenImpl(
             modifier = modifier,
@@ -58,7 +68,7 @@ class CharacterSelectScreenImpl @Inject constructor() : CharacterSelectScreen {
             onCharacterExpand = { expandedCharacterId = it },
             onCharacterCollapse = { expandedCharacterId = null },
             onCharacterDelete = { viewModel.deleteCharacter(it) },
-            onCharacterOpen = { onNavigateToEditCharacter(it.characterId) },
+            onCharacterOpen = { character -> viewModel.selectCharacter(character.characterId) },
             onCreateNew = onNavigateToNewCharacter
         )
     }

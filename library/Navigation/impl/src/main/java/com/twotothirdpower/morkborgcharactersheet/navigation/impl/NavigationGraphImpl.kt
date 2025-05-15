@@ -165,8 +165,10 @@ class NavigationGraphImpl @Inject constructor(
                             onNavigateToNewCharacter = {
                                 navController.navigate(Screen.ManageCharacter.route)
                             },
-                            onNavigateToEditCharacter = { characterId ->
-                                navController.navigate(Screen.ManageCharacter.routeWithArgs(characterId))
+                            onNavigateToCharacterSheet = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(1) // CharacterSheet is at index 1
+                                }
                             }
                         )
                         1 -> characterSheetScreen.Content(modifier)
