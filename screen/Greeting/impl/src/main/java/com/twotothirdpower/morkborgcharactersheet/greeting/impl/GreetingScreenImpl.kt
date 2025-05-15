@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -28,19 +28,23 @@ import com.twotothirdpower.morkborgcharactersheet.commonuiresources.SoothsayerTh
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.R as commonUiR
 import com.twotothirdpower.morkborgcharactersheet.greeting.GreetingScreen
 import kotlinx.coroutines.delay
+import androidx.hilt.navigation.compose.hiltViewModel
 import javax.inject.Inject
 
 class GreetingScreenImpl @Inject constructor() : GreetingScreen {
     @Composable
     override fun Content(
         modifier: Modifier,
-        onGreetingComplete: () -> Unit
+        onGreetingComplete: (characterId: Int?) -> Unit
     ) {
-        // Use rememberUpdatedState to ensure `onGreetingComplete` is called changes after the LaunchedEffect starts
-        val onComplete by rememberUpdatedState(onGreetingComplete)
-        LaunchedEffect(Unit) {
-            delay(3000L)
-            onComplete()
+        val viewModel: GreetingViewModel = hiltViewModel()
+        val uiState by viewModel.uiState.collectAsState()
+
+        LaunchedEffect(uiState) {
+            if (uiState is GreetingUiState.Ready) {
+                delay(3000L)
+                onGreetingComplete((uiState as GreetingUiState.Ready).characterId)
+            }
         }
 
         Box(
@@ -74,7 +78,7 @@ fun GreetingScreenPreview() {
     SoothsayerTheme {
         GreetingScreenImpl().Content(
             modifier = Modifier.fillMaxSize(),
-            onGreetingComplete = {}
+            onGreetingComplete = { /* no-op for preview */ }
         )
     }
 } 

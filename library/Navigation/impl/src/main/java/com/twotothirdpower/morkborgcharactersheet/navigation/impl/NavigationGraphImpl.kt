@@ -87,9 +87,15 @@ class NavigationGraphImpl @Inject constructor(
             composable(Screen.Greeting.route) {
                 greetingScreen.Content(
                     modifier = modifier,
-                    onGreetingComplete = {
-                        navController.navigate(Screen.CharacterSheet.route) {
-                            popUpTo(Screen.Greeting.route) { inclusive = true }
+                    onGreetingComplete = { characterId ->
+                        if (characterId != null) {
+                            navController.navigate(Screen.CharacterSheet.route) {
+                                popUpTo(Screen.Greeting.route) { inclusive = true }
+                            }
+                        } else {
+                            navController.navigate(Screen.ManageCharacter.route) {
+                                popUpTo(Screen.Greeting.route) { inclusive = true }
+                            }
                         }
                     }
                 )

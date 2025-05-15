@@ -7,6 +7,6 @@ interface GreetingScreen {
     @Composable
     fun Content(
         modifier: Modifier,
-        onGreetingComplete: () -> Unit
+        onGreetingComplete: (characterId: Int?) -> Unit
     )
 } 

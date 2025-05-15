@@ -56,4 +56,10 @@ interface DomainModule {
     fun bindGetCharacterUseCase(
         impl: GetCharacterUseCaseImpl
     ): GetCharacterUseCase
+
+    @Binds
+    @Singleton
+    fun bindGetMostRecentCharacterUseCase(
+        impl: com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.GetMostRecentCharacterUseCaseImpl
+    ): com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetMostRecentCharacterUseCase
 } 

@@ -43,6 +43,7 @@ android {
 
 dependencies {
     implementation(project(":screen:Greeting:public"))
+    implementation(project(":data:Domain:public"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.androidx.compose.bom))
@@ -51,6 +52,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     debugImplementation(libs.ui.tooling)
     kapt(libs.hilt.compiler)
     implementation(project(":library:CommonUiResources"))
