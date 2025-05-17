@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(project(":screen:CharacterSheet:public"))
     implementation(project(":library:CommonUiResources"))
+    implementation(project(":library:Dice:public"))
     kapt(libs.hilt.compiler)
     debugImplementation(libs.ui.tooling)
     testImplementation(libs.junit)

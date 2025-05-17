@@ -18,4 +18,8 @@ object DiceModule {
     @Provides
     @Singleton
     fun provideDiceRollerInput(): DiceRollerInput = DiceRollerInputImpl()
+
+    @Provides
+    @Singleton
+    fun provideRandomProvider(): RandomProvider = DefaultRandomProvider()
 } 

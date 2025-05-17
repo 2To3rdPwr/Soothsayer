@@ -1,6 +1,8 @@
 package com.twotothirdpower.morkborgcharactersheet.charactersheet.impl
 
 import com.twotothirdpower.morkborgcharactersheet.charactersheet.CharacterSheetScreen
+import com.twotothirdpower.morkborgcharactersheet.dice.DiceRoller
+import com.twotothirdpower.morkborgcharactersheet.dice.DiceRollerInput
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,5 +14,8 @@ import javax.inject.Singleton
 object CharacterSheetModule {
     @Provides
     @Singleton
-    fun provideCharacterSheetScreen(): CharacterSheetScreen = CharacterSheetScreenImpl()
+    fun provideCharacterSheetScreen(
+        diceRoller: DiceRoller,
+        diceRollerInput: DiceRollerInput
+    ): CharacterSheetScreen = CharacterSheetScreenImpl(diceRoller, diceRollerInput)
 } 

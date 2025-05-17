@@ -85,6 +85,8 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.navigation.compose)
     kapt(libs.hilt.compiler)
+    implementation(project(":library:Dice:public"))
+    implementation(project(":library:Dice:impl"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

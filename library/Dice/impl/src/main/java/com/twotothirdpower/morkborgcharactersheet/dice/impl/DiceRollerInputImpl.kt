@@ -34,6 +34,10 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import com.twotothirdpower.morkborgcharactersheet.commonuiresources.CutTheCrap
+import com.twotothirdpower.morkborgcharactersheet.commonuiresources.DharmaPunk
+import com.twotothirdpower.morkborgcharactersheet.commonuiresources.GraveDigger
+import com.twotothirdpower.morkborgcharactersheet.commonuiresources.VirgoDisplay
 
 class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
     @Composable
@@ -47,16 +51,13 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
         var statTypeExpanded by remember { mutableStateOf(false) }
 
         val textMeasurer = rememberTextMeasurer()
-        // Measure widest DiceValue by name
-        val widestDiceValue = DiceValue.entries.maxByOrNull { it.name.length }?.name ?: ""
-        val diceValueTextWidth = textMeasurer.measure(widestDiceValue, style = LocalTextStyle.current).size.width
-        // Measure widest StatType (uppercase, as rendered)
-        val widestStatType = StatType.entries.maxByOrNull { it.name.length }?.name ?: ""
-        val statTypeTextWidth = textMeasurer.measure(widestStatType, style = LocalTextStyle.current).size.width
-        // Add extra padding for dropdown icon and comfort
-        val diceDropdownWidth = (diceValueTextWidth).dp
-        val statDropdownWidth = (statTypeTextWidth).dp // Increased padding for icon and comfort
-        val numberFieldWidth: Dp = 48.dp
+        // Use smaller font and compact sizing
+        val compactFontSize = 14.sp
+        val numberFieldWidth: Dp = 36.dp
+        val diceValueTextWidth = textMeasurer.measure("D100", style = LocalTextStyle.current.copy(fontSize = compactFontSize)).size.width
+        val statTypeTextWidth = textMeasurer.measure("Toughness", style = LocalTextStyle.current.copy(fontSize = compactFontSize)).size.width
+        val diceDropdownWidth = (diceValueTextWidth * 0.8).dp
+        val statDropdownWidth = (statTypeTextWidth * 0.6).dp
 
         Row(
             modifier = modifier,
@@ -88,7 +89,12 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                 modifier = Modifier
                     .width(diceDropdownWidth)
             )
-            Text(" + ", modifier = Modifier.padding(horizontal = 2.dp))
+            Text(
+                "+",
+                fontFamily = CutTheCrap,
+                fontSize = compactFontSize,
+                modifier = Modifier.padding(horizontal = 2.dp)
+            )
             // Misc Modifier
             DiceNumberField(
                 value = state.miscModifier.toString(),
@@ -103,7 +109,12 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                     .padding(end = 4.dp)
             )
             if (showStatModifier) {
-                Text(" + ", modifier = Modifier.padding(horizontal = 2.dp))
+                Text(
+                    "+",
+                    fontFamily = CutTheCrap,
+                    fontSize = compactFontSize,
+                    modifier = Modifier.padding(horizontal = 2.dp)
+                )
                 // StatType Dropdown (compact style)
                 CompactDropdown(
                     value = state.statType.name,
@@ -138,16 +149,15 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
         onValueChange: (String) -> Unit,
         modifier: Modifier = Modifier
     ) {
-        val isFocused by remember { mutableStateOf(false) }
-        val fieldHeight = 36.dp
-        val underlinePadding = 30.dp
-        Box(modifier = modifier.height(fieldHeight)) {
+        var isFocused by remember { mutableStateOf(false) }
+        Box(modifier = modifier.height(28.dp)) {
             BasicTextField(
                 value = value,
                 onValueChange = onValueChange,
                 textStyle = LocalTextStyle.current.copy(
                     textAlign = TextAlign.Center,
-                    fontSize = 20.sp
+                    fontSize = 18.sp,
+                    fontFamily = GraveDigger
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
@@ -159,7 +169,7 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = underlinePadding)
+                    .padding(top = 22.dp)
                     .height(2.dp)
                     .background(if (isFocused) Color.Red else Color.Black)
             )
@@ -176,13 +186,11 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
         modifier: Modifier = Modifier
     ) {
         var isFocused by remember { mutableStateOf(false) }
-        val fieldHeight = 36.dp
-        val underlinePadding = 30.dp
-        Box(modifier = modifier.height(fieldHeight)) {
+        Box(modifier = modifier.height(28.dp)) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(fieldHeight)
+                    .height(28.dp)
                     .background(Color.Transparent)
                     .onFocusChanged { isFocused = it.isFocused }
                     .clickable { onExpandedChange(true) },
@@ -192,7 +200,8 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                     text = value,
                     style = LocalTextStyle.current.copy(
                         textAlign = TextAlign.Start,
-                        fontSize = 20.sp
+                        fontSize = 14.sp,
+                        fontFamily = CutTheCrap
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -208,7 +217,7 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = underlinePadding)
+                    .padding(top = 22.dp)
                     .height(2.dp)
                     .background(if (expanded || isFocused) Color.Red else Color.Black)
             )
@@ -219,7 +228,7 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option) },
+                        text = { Text(option, fontFamily = CutTheCrap, fontSize = 14.sp) },
                         onClick = {
                             onOptionSelected(option)
                             onExpandedChange(false)

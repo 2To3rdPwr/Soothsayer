@@ -22,8 +22,19 @@ import com.twotothirdpower.morkborgcharactersheet.commonuiresources.SoothsayerTh
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.CutTheCrap
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.R as CommonUiR
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.twotothirdpower.morkborgcharactersheet.dice.DiceRoller
+import com.twotothirdpower.morkborgcharactersheet.dice.DiceRollerInput
+import com.twotothirdpower.morkborgcharactersheet.dice.DiceState
+import com.twotothirdpower.morkborgcharactersheet.dice.DiceRoll
+import androidx.compose.material3.Button
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
-class CharacterSheetScreenImpl @Inject constructor() : CharacterSheetScreen {
+class CharacterSheetScreenImpl @Inject constructor(
+    private val diceRoller: DiceRoller,
+    private val diceRollerInput: DiceRollerInput
+) : CharacterSheetScreen {
     @Composable
     override fun Content(
         modifier: Modifier,
@@ -42,7 +53,9 @@ class CharacterSheetScreenImpl @Inject constructor() : CharacterSheetScreen {
         CharacterSheetContent(
             modifier = modifier,
             characterName = characterName,
-            onEditCharacter = { character?.characterId?.let { onEditCharacter(it) } }
+            onEditCharacter = { character?.characterId?.let { onEditCharacter(it) } },
+            diceRoller = diceRoller,
+            diceRollerInput = diceRollerInput
         )
     }
 }
@@ -51,8 +64,12 @@ class CharacterSheetScreenImpl @Inject constructor() : CharacterSheetScreen {
 fun CharacterSheetContent(
     modifier: Modifier = Modifier,
     characterName: String?,
-    onEditCharacter: () -> Unit
+    onEditCharacter: () -> Unit,
+    diceRoller: DiceRoller,
+    diceRollerInput: DiceRollerInput
 ) {
+    var diceState by remember { mutableStateOf(DiceState()) }
+    var rollResult by remember { mutableStateOf<Int?>(null) }
     Column(modifier = modifier.fillMaxSize()) {
         // Character Header
         Row(
@@ -84,18 +101,47 @@ fun CharacterSheetContent(
                     .clickable { onEditCharacter() }
             )
         }
-        // ... (rest of the screen content goes here)
+        Spacer(modifier = Modifier.weight(1f))
+        // Dice Roller Input, Roll Button, and Result
+        diceRollerInput.Content(
+            modifier = Modifier
+                .wrapContentWidth()
+                .padding(horizontal = 20.dp),
+            state = diceState,
+            showStatModifier = true,
+            onDiceRollUpdated = { diceRoll ->
+                diceState = diceRoll.toDiceState()
+            }
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Button(
+            onClick = { rollResult = diceRoller.roll(diceState.toDiceRoll()) },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(horizontal = 20.dp)
+        ) {
+            Text("Roll")
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = rollResult?.toString() ?: "",
+            fontSize = 24.sp,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CharacterSheetContentPreview() {
-    SoothsayerTheme {
-        CharacterSheetContent(
-            modifier = Modifier,
-            characterName = "Buster the foresaken",
-            onEditCharacter = {}
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CharacterSheetContentPreview() {
+//    SoothsayerTheme {
+//        CharacterSheetContent(
+//            modifier = Modifier,
+//            characterName = "Buster the foresaken",
+//            onEditCharacter = {},
+//            diceRoller = DiceRoller(),
+//            diceRollerInput = DiceRollerInput()
+//        )
+//    }
+//}
