@@ -35,9 +35,8 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.CutTheCrap
-import com.twotothirdpower.morkborgcharactersheet.commonuiresources.DharmaPunk
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.GraveDigger
-import com.twotothirdpower.morkborgcharactersheet.commonuiresources.VirgoDisplay
+import androidx.compose.ui.unit.TextUnit
 
 class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
     @Composable
@@ -45,19 +44,18 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
         modifier: Modifier,
         state: DiceState,
         showStatModifier: Boolean,
-        onDiceRollUpdated: (DiceRoll) -> Unit
+        onDiceRollUpdated: (DiceRoll) -> Unit,
+        fontSize: TextUnit
     ) {
         var diceValueExpanded by remember { mutableStateOf(false) }
         var statTypeExpanded by remember { mutableStateOf(false) }
 
         val textMeasurer = rememberTextMeasurer()
-        // Use smaller font and compact sizing
-        val compactFontSize = 14.sp
         val numberFieldWidth: Dp = 36.dp
-        val diceValueTextWidth = textMeasurer.measure("D100", style = LocalTextStyle.current.copy(fontSize = compactFontSize)).size.width
-        val statTypeTextWidth = textMeasurer.measure("Toughness", style = LocalTextStyle.current.copy(fontSize = compactFontSize)).size.width
+        val diceValueTextWidth = textMeasurer.measure("D100", style = LocalTextStyle.current.copy(fontSize = fontSize)).size.width
+        val statTypeTextWidth = textMeasurer.measure("Toughness", style = LocalTextStyle.current.copy(fontSize = fontSize)).size.width
         val diceDropdownWidth = (diceValueTextWidth * 0.8).dp
-        val statDropdownWidth = (statTypeTextWidth * 0.6).dp
+        val statDropdownWidth = (statTypeTextWidth  * 0.6).dp
 
         Row(
             modifier = modifier,
@@ -74,7 +72,8 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                 },
                 modifier = Modifier
                     .width(numberFieldWidth)
-                    .padding(end = 4.dp)
+                    .padding(end = 4.dp),
+                fontSize = fontSize
             )
             // DiceValue Dropdown (compact style)
             CompactDropdown(
@@ -87,12 +86,13 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                     onDiceRollUpdated(state.copy(diceValue = selectedValue).toDiceRoll())
                 },
                 modifier = Modifier
-                    .width(diceDropdownWidth)
+                    .width(diceDropdownWidth),
+                fontSize = fontSize
             )
             Text(
                 "+",
                 fontFamily = CutTheCrap,
-                fontSize = compactFontSize,
+                fontSize = fontSize,
                 modifier = Modifier.padding(horizontal = 2.dp)
             )
             // Misc Modifier
@@ -106,13 +106,14 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                 },
                 modifier = Modifier
                     .width(numberFieldWidth)
-                    .padding(end = 4.dp)
+                    .padding(end = 4.dp),
+                fontSize = fontSize
             )
             if (showStatModifier) {
                 Text(
                     "+",
                     fontFamily = CutTheCrap,
-                    fontSize = compactFontSize,
+                    fontSize = fontSize,
                     modifier = Modifier.padding(horizontal = 2.dp)
                 )
                 // StatType Dropdown (compact style)
@@ -126,44 +127,51 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                         onDiceRollUpdated(state.copy(statType = selectedType).toDiceRoll())
                     },
                     modifier = Modifier
-                        .width(statDropdownWidth)
+                        .width(statDropdownWidth),
+                    fontSize = fontSize
                 )
             }
         }
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun DiceRollerInputPreview() {
-        DiceRollerInputImpl().Content(
-            modifier = Modifier,
-            state = DiceState(100, DiceValue.D100, StatType.TOUGHNESS, 100),
-            showStatModifier = true,
-            onDiceRollUpdated = {}
-        )
     }
 
     @Composable
     private fun DiceNumberField(
         value: String,
         onValueChange: (String) -> Unit,
-        modifier: Modifier = Modifier
+        modifier: Modifier = Modifier,
+        fontSize: TextUnit
     ) {
         var isFocused by remember { mutableStateOf(false) }
+        var localValue by remember { mutableStateOf(value) }
+        // Sync localValue with parent state if it changes externally
+        LaunchedEffect(value) {
+            if (!isFocused && value != localValue) localValue = value
+        }
         Box(modifier = modifier.height(28.dp)) {
             BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
+                value = localValue,
+                onValueChange = {
+                    localValue = it
+                    onValueChange(it)
+                },
                 textStyle = LocalTextStyle.current.copy(
                     textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
+                    fontSize = fontSize,
                     fontFamily = GraveDigger
                 ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        val nowFocused = focusState.isFocused
+                        if (isFocused && !nowFocused && localValue.isBlank()) {
+                            localValue = "0"
+                            onValueChange("0")
+                        }
+                        isFocused = nowFocused
+                    },
                 cursorBrush = SolidColor(Color.Red)
             )
             Spacer(
@@ -183,7 +191,8 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
         expanded: Boolean,
         onExpandedChange: (Boolean) -> Unit,
         onOptionSelected: (String) -> Unit,
-        modifier: Modifier = Modifier
+        modifier: Modifier = Modifier,
+        fontSize: TextUnit
     ) {
         var isFocused by remember { mutableStateOf(false) }
         Box(modifier = modifier.height(28.dp)) {
@@ -200,7 +209,7 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                     text = value,
                     style = LocalTextStyle.current.copy(
                         textAlign = TextAlign.Start,
-                        fontSize = 14.sp,
+                        fontSize = fontSize,
                         fontFamily = CutTheCrap
                     ),
                     modifier = Modifier
@@ -228,7 +237,7 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option, fontFamily = CutTheCrap, fontSize = 14.sp) },
+                        text = { Text(option, fontFamily = CutTheCrap, fontSize = fontSize) },
                         onClick = {
                             onOptionSelected(option)
                             onExpandedChange(false)
@@ -237,5 +246,17 @@ class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
                 }
             }
         }
+    }
+
+    @Preview(showBackground = true)
+    @Composable
+    private fun DiceRollerInputPreview() {
+        DiceRollerInputImpl().Content(
+            modifier = Modifier,
+            state = DiceState(100, DiceValue.D100, StatType.TOUGHNESS, 100),
+            showStatModifier = true,
+            onDiceRollUpdated = {},
+            fontSize = 14.sp
+        )
     }
 } 

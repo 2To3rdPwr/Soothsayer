@@ -111,7 +111,8 @@ fun CharacterSheetContent(
             showStatModifier = true,
             onDiceRollUpdated = { diceRoll ->
                 diceState = diceRoll.toDiceState()
-            }
+            },
+            fontSize = 12.sp
         )
         Spacer(modifier = Modifier.height(12.dp))
         Button(
@@ -132,16 +133,16 @@ fun CharacterSheetContent(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun CharacterSheetContentPreview() {
-//    SoothsayerTheme {
-//        CharacterSheetContent(
-//            modifier = Modifier,
-//            characterName = "Buster the foresaken",
-//            onEditCharacter = {},
-//            diceRoller = DiceRoller(),
-//            diceRollerInput = DiceRollerInput()
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun CharacterSheetContentPreview() {
+    SoothsayerTheme {
+        CharacterSheetContent(
+            modifier = Modifier,
+            characterName = "Buster the foresaken",
+            onEditCharacter = {},
+            diceRoller = DiceRoller(),
+            diceRollerInput = DiceRollerInput()
+        )
+    }
+}
