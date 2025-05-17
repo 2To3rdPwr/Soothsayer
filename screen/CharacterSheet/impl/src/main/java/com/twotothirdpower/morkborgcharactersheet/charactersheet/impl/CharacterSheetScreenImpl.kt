@@ -33,6 +33,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
+import com.twotothirdpower.morkborgcharactersheet.dice.DiceRollResult
+import androidx.compose.ui.graphics.Color
 
 class CharacterSheetScreenImpl @Inject constructor(
     private val diceRoller: DiceRoller,
@@ -72,7 +74,7 @@ fun CharacterSheetContent(
     diceRollerInput: DiceRollerInput
 ) {
     var diceState by remember { mutableStateOf(DiceState()) }
-    var rollResult by remember { mutableStateOf<Int?>(null) }
+    var rollResult by remember { mutableStateOf<DiceRollResult?>(null) }
     val coroutineScope = rememberCoroutineScope()
     Column(modifier = modifier.fillMaxSize()) {
         // Character Header
@@ -132,9 +134,15 @@ fun CharacterSheetContent(
             Text("Roll")
         }
         Spacer(modifier = Modifier.height(12.dp))
+        val rollColor = when {
+            rollResult?.fumble == true -> Color.Blue
+            rollResult?.crit == true -> Color.Red
+            else -> Color.Unspecified
+        }
         Text(
-            text = rollResult?.toString() ?: "",
+            text = rollResult?.result?.toString() ?: "",
             fontSize = 24.sp,
+            color = rollColor,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(24.dp))
@@ -146,7 +154,7 @@ fun CharacterSheetContent(
 fun CharacterSheetContentPreview() {
     // Fake DiceRoller that always returns 7
     val fakeDiceRoller = object : DiceRoller {
-        override suspend fun roll(diceRoll: DiceRoll): Int = 7
+        override suspend fun roll(diceRoll: DiceRoll): DiceRollResult = DiceRollResult(result = 7)
     }
     // Fake DiceRollerInput that just shows a placeholder UI
     val fakeDiceRollerInput = object : DiceRollerInput {
