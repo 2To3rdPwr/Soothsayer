@@ -30,6 +30,7 @@ import androidx.compose.material3.Button
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.TextUnit
 
 class CharacterSheetScreenImpl @Inject constructor(
     private val diceRoller: DiceRoller,
@@ -136,13 +137,30 @@ fun CharacterSheetContent(
 @Preview(showBackground = true)
 @Composable
 fun CharacterSheetContentPreview() {
+    // Fake DiceRoller that always returns 7
+    val fakeDiceRoller = object : DiceRoller {
+        override fun roll(diceRoll: DiceRoll): Int = 7
+    }
+    // Fake DiceRollerInput that just shows a placeholder UI
+    val fakeDiceRollerInput = object : DiceRollerInput {
+        @Composable
+        override fun Content(
+            modifier: Modifier,
+            state: DiceState,
+            showStatModifier: Boolean,
+            onDiceRollUpdated: (DiceRoll) -> Unit,
+            fontSize: TextUnit
+        ) {
+            Text("DiceRollerInput Preview", modifier = modifier)
+        }
+    }
     SoothsayerTheme {
         CharacterSheetContent(
             modifier = Modifier,
-            characterName = "Buster the foresaken",
+            characterName = "Buster the Forsaken",
             onEditCharacter = {},
-            diceRoller = DiceRoller(),
-            diceRollerInput = DiceRollerInput()
+            diceRoller = fakeDiceRoller,
+            diceRollerInput = fakeDiceRollerInput
         )
     }
 }
