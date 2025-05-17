@@ -1,4 +1,4 @@
-package com.twotothirdpower.morkborgcharactersheet.dice
+package com.twotothirdpower.morkborgcharactersheet.domain
 
 enum class StatType {
     NONE,

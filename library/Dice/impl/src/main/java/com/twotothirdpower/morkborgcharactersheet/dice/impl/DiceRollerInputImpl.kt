@@ -37,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.CutTheCrap
 import com.twotothirdpower.morkborgcharactersheet.commonuiresources.GraveDigger
 import androidx.compose.ui.unit.TextUnit
+import com.twotothirdpower.morkborgcharactersheet.domain.StatType
 
 class DiceRollerInputImpl @Inject constructor() : DiceRollerInput {
     @Composable

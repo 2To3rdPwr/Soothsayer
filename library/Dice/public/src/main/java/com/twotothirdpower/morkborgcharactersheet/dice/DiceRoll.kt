@@ -1,5 +1,7 @@
 package com.twotothirdpower.morkborgcharactersheet.dice
 
+import com.twotothirdpower.morkborgcharactersheet.domain.StatType
+
 /**
  * Represents a possible dice roll configuration.
  */

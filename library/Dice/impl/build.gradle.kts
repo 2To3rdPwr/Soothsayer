@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.hilt.android)
     debugImplementation(libs.ui.tooling)
     implementation(project(":library:CommonUiResources"))
+    implementation(project(":data:Domain:public"))
     kapt(libs.hilt.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

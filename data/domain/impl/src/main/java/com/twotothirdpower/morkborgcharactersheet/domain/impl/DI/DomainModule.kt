@@ -6,12 +6,14 @@ import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.GetCharac
 import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.GetCharactersListUseCaseImpl
 import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.ImproveCharacterUseCaseImpl
 import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.SaveCharacterUseCaseImpl
+import com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.GetCurrentCharacterStatUseCaseImpl
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.DeleteCharacterUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GenerateRandomCharacterUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetCharacterUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetCharactersListUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.ImproveCharacterUseCase
 import com.twotothirdpower.morkborgcharactersheet.domain.usecases.SaveCharacterUseCase
+import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetCurrentCharacterStatUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -68,4 +70,7 @@ interface DomainModule {
     fun bindSelectCharacterUseCase(
         impl: com.twotothirdpower.morkborgcharactersheet.domain.impl.usecases.SelectCharacterUseCaseImpl
     ): com.twotothirdpower.morkborgcharactersheet.domain.usecases.SelectCharacterUseCase
+
+    @Binds
+    fun bindGetCurrentCharacterStatUseCase(impl: GetCurrentCharacterStatUseCaseImpl): GetCurrentCharacterStatUseCase
 } 

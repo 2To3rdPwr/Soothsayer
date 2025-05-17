@@ -2,6 +2,7 @@ package com.twotothirdpower.morkborgcharactersheet.dice.impl
 
 import com.twotothirdpower.morkborgcharactersheet.dice.DiceRoller
 import com.twotothirdpower.morkborgcharactersheet.dice.DiceRollerInput
+import com.twotothirdpower.morkborgcharactersheet.domain.usecases.GetCurrentCharacterStatUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,7 +14,10 @@ import javax.inject.Singleton
 object DiceModule {
     @Provides
     @Singleton
-    fun provideDiceRoller(randomProvider: RandomProvider): DiceRoller = DiceRollerImpl(randomProvider)
+    fun provideDiceRoller(
+        randomProvider: RandomProvider,
+        getCurrentCharacterStatUseCase: GetCurrentCharacterStatUseCase
+    ): DiceRoller = DiceRollerImpl(randomProvider, getCurrentCharacterStatUseCase)
 
     @Provides
     @Singleton

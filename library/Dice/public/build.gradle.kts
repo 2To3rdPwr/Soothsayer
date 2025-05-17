@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation(project(":data:Domain:public"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

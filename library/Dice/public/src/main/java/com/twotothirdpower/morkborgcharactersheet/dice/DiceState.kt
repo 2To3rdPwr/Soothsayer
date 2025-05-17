@@ -1,5 +1,7 @@
 package com.twotothirdpower.morkborgcharactersheet.dice
 
+import com.twotothirdpower.morkborgcharactersheet.domain.StatType
+
 /**
  * State holder for DiceRollerInput composable.
  */

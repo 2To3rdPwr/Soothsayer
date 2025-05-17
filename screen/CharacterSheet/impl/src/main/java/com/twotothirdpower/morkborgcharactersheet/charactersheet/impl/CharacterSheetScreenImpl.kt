@@ -31,6 +31,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 class CharacterSheetScreenImpl @Inject constructor(
     private val diceRoller: DiceRoller,
@@ -71,6 +73,7 @@ fun CharacterSheetContent(
 ) {
     var diceState by remember { mutableStateOf(DiceState()) }
     var rollResult by remember { mutableStateOf<Int?>(null) }
+    val coroutineScope = rememberCoroutineScope()
     Column(modifier = modifier.fillMaxSize()) {
         // Character Header
         Row(
@@ -117,7 +120,11 @@ fun CharacterSheetContent(
         )
         Spacer(modifier = Modifier.height(12.dp))
         Button(
-            onClick = { rollResult = diceRoller.roll(diceState.toDiceRoll()) },
+            onClick = {
+                coroutineScope.launch {
+                    rollResult = diceRoller.roll(diceState.toDiceRoll())
+                }
+            },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(horizontal = 20.dp)
@@ -139,7 +146,7 @@ fun CharacterSheetContent(
 fun CharacterSheetContentPreview() {
     // Fake DiceRoller that always returns 7
     val fakeDiceRoller = object : DiceRoller {
-        override fun roll(diceRoll: DiceRoll): Int = 7
+        override suspend fun roll(diceRoll: DiceRoll): Int = 7
     }
     // Fake DiceRollerInput that just shows a placeholder UI
     val fakeDiceRollerInput = object : DiceRollerInput {
